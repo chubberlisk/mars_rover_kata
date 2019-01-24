@@ -310,4 +310,44 @@ describe MarsRover do
       end
     end
   end
+
+  describe 'moves using a mixture of commands' do
+    context 'starting from (0, 0) and facing north' do
+      it 'e.g. f, f, b, b' do
+        subject.move(['f', 'f', 'b', 'b'])
+        expect(subject.position).to eq({ x: 0, y: 0 })
+        expect(subject.direction).to eq(:north)
+      end
+
+      it 'e.g. b, b, b, f' do
+        subject.move(['b', 'b', 'b', 'f'])
+        expect(subject.position).to eq({ x: 0, y: -2 })
+        expect(subject.direction).to eq(:north)
+      end
+
+      it 'e.g. r, r, l, l' do
+        subject.move(['r', 'r', 'l', 'l'])
+        expect(subject.position).to eq({ x: 0, y: 0 })
+        expect(subject.direction).to eq(:north)
+      end
+
+      it 'e.g. l, l, l, r' do
+        subject.move(['l', 'l', 'l', 'r'])
+        expect(subject.position).to eq({ x: 0, y: 0 })
+        expect(subject.direction).to eq(:south)
+      end
+
+      it 'e.g. b, r, f, l, f, f' do
+        subject.move(['b', 'r', 'f', 'l', 'f', 'f', 'l'])
+        expect(subject.position).to eq({ x: 1, y: 1 })
+        expect(subject.direction).to eq(:west)
+      end
+
+      it 'e.g. f, r, f, r, b, l,' do
+        subject.move(['f', 'r', 'f', 'r', 'b', 'l'])
+        expect(subject.position).to eq({ x: 1, y: 2 })
+        expect(subject.direction).to eq(:east)
+      end
+    end
+  end
 end
