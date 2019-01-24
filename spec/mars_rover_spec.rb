@@ -20,11 +20,13 @@ describe MarsRover do
       it 'once' do
         subject.move(['f'])
         expect(subject.position).to eq({ x: 0, y: 1 })
+        expect(subject.direction).to eq(:north)
       end
 
       it 'twice' do
         subject.move(['f', 'f'])
         expect(subject.position).to eq({ x: 0, y: 2 })
+        expect(subject.direction).to eq(:north)
       end
 
       it 'for any given number of forward commands' do
@@ -32,111 +34,62 @@ describe MarsRover do
         commands = num_of_forwards.times.map { 'f' }
         subject.move(commands)
         expect(subject.position).to eq({ x: 0, y: num_of_forwards })
+        expect(subject.direction).to eq(:north)
       end
     end
 
     context 'starting from random (x, y) and facing north' do
-      let(:x) { rand(-100..100) }
-      let(:y) { rand(-100..100) }
-
-      before { subject.instance_variable_set(:@position, { x: x, y: y }) }
-
-      it 'once' do
-        subject.move(['f'])
-        expect(subject.position).to eq({ x: x, y: y + 1 })
-      end
-
-      it 'twice' do
-        subject.move(['f', 'f'])
-        expect(subject.position).to eq({ x: x, y: y + 2 })
-      end
-
       it 'for any given number of forward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
         num_of_forwards = rand(0..100)
         commands = num_of_forwards.times.map { 'f' }
         subject.move(commands)
         expect(subject.position).to eq({ x: x, y: y + num_of_forwards })
+        expect(subject.direction).to eq(:north)
       end
     end
 
     context 'starting from random (x, y) and facing east' do
-      let(:x) { rand(-100..100) }
-      let(:y) { rand(-100..100) }
-
-      before do
+      it 'for any given number of forward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
         subject.instance_variable_set(:@position, { x: x, y: y })
         subject.instance_variable_set(:@direction, :east)
-      end
-
-      it 'once' do
-        subject.move(['f'])
-        expect(subject.position).to eq({ x: x + 1, y: y })
-      end
-
-      it 'twice' do
-        subject.move(['f', 'f'])
-        expect(subject.position).to eq({ x: x + 2, y: y })
-      end
-
-      it 'for any given number of forward commands' do
         num_of_forwards = rand(0..100)
         commands = num_of_forwards.times.map { 'f' }
         subject.move(commands)
         expect(subject.position).to eq({ x: x + num_of_forwards, y: y })
+        expect(subject.direction).to eq(:east)
       end
     end
 
     context 'starting from random (x, y) and facing south' do
-      let(:x) { rand(-100..100) }
-      let(:y) { rand(-100..100) }
-
-      before do
+      it 'for any given number of forward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
         subject.instance_variable_set(:@position, { x: x, y: y })
         subject.instance_variable_set(:@direction, :south)
-      end
-
-      it 'once' do
-        subject.move(['f'])
-        expect(subject.position).to eq({ x: x, y: y - 1 })
-      end
-
-      it 'twice' do
-        subject.move(['f', 'f'])
-        expect(subject.position).to eq({ x: x, y: y - 2 })
-      end
-
-      it 'for any given number of forward commands' do
         num_of_forwards = rand(0..100)
         commands = num_of_forwards.times.map { 'f' }
         subject.move(commands)
         expect(subject.position).to eq({ x: x, y: y - num_of_forwards })
+        expect(subject.direction).to eq(:south)
       end
     end
 
     context 'starting from random (x, y) and facing west' do
-      let(:x) { rand(-100..100) }
-      let(:y) { rand(-100..100) }
-
-      before do
+      it 'for any given number of forward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
         subject.instance_variable_set(:@position, { x: x, y: y })
         subject.instance_variable_set(:@direction, :west)
-      end
-
-      it 'once' do
-        subject.move(['f'])
-        expect(subject.position).to eq({ x: x - 1, y: y })
-      end
-
-      it 'twice' do
-        subject.move(['f', 'f'])
-        expect(subject.position).to eq({ x: x - 2, y: y })
-      end
-
-      it 'for any given number of forward commands' do
         num_of_forwards = rand(0..100)
         commands = num_of_forwards.times.map { 'f' }
         subject.move(commands)
         expect(subject.position).to eq({ x: x - num_of_forwards, y: y })
+        expect(subject.direction).to eq(:west)
       end
     end
   end
@@ -146,11 +99,13 @@ describe MarsRover do
       it 'once' do
         subject.move(['b'])
         expect(subject.position).to eq({ x: 0, y: -1 })
+        expect(subject.direction).to eq(:north)
       end
 
       it 'twice' do
         subject.move(['b', 'b'])
         expect(subject.position).to eq({ x: 0, y: -2 })
+        expect(subject.direction).to eq(:north)
       end
 
       it 'for any given number of backward commands' do
@@ -158,9 +113,67 @@ describe MarsRover do
         commands = num_of_backwards.times.map { 'b' }
         subject.move(commands)
         expect(subject.position).to eq({ x: 0, y: -num_of_backwards })
+        expect(subject.direction).to eq(:north)
       end
     end
 
+    context 'starting from random (x, y) and facing north' do
+      it 'for any given number of backward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        num_of_backwards = rand(0..100)
+        commands = num_of_backwards.times.map { 'b' }
+        subject.move(commands)
+        expect(subject.position).to eq({ x: x, y: y - num_of_backwards })
+        expect(subject.direction).to eq(:north)
+      end
+    end
+
+    context 'starting from random (x, y) and facing east' do
+      it 'for any given number of backward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        subject.instance_variable_set(:@direction, :east)
+        num_of_backwards = rand(0..100)
+        commands = num_of_backwards.times.map { 'b' }
+        subject.move(commands)
+        expect(subject.position).to eq({ x: x - num_of_backwards, y: y })
+        expect(subject.direction).to eq(:east)
+      end
+    end
+
+    context 'starting from random (x, y) and facing south' do
+      it 'for any given number of backward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        subject.instance_variable_set(:@direction, :south)
+        num_of_backwards = rand(0..100)
+        commands = num_of_backwards.times.map { 'b' }
+        subject.move(commands)
+        expect(subject.position).to eq({ x: x, y: y + num_of_backwards })
+        expect(subject.direction).to eq(:south)
+      end
+    end
+
+    context 'starting from random (x, y) and facing west' do
+      it 'for any given number of forward commands' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        subject.instance_variable_set(:@direction, :west)
+        num_of_backwards = rand(0..100)
+        commands = num_of_backwards.times.map { 'b' }
+        subject.move(commands)
+        expect(subject.position).to eq({ x: x + num_of_backwards, y: y })
+        expect(subject.direction).to eq(:west)
+      end
+    end
+  end
+
+  describe 'moves right' do
     context 'starting from random (x, y) and facing north' do
       let(:x) { rand(-100..100) }
       let(:y) { rand(-100..100) }
@@ -168,101 +181,132 @@ describe MarsRover do
       before { subject.instance_variable_set(:@position, { x: x, y: y }) }
 
       it 'once' do
-        subject.move(['b'])
-        expect(subject.position).to eq({ x: x, y: y - 1 })
+        subject.move(['r'])
+        expect(subject.direction).to eq(:east)
+        expect(subject.position).to eq({ x: x, y: y })
       end
 
       it 'twice' do
-        subject.move(['b', 'b'])
-        expect(subject.position).to eq({ x: x, y: y - 2 })
+        subject.move(['r', 'r'])
+        expect(subject.direction).to eq(:south)
+        expect(subject.position).to eq({ x: x, y: y })
       end
 
-      it 'for any given number of backward commands' do
-        num_of_backwards = rand(0..100)
-        commands = num_of_backwards.times.map { 'b' }
-        subject.move(commands)
-        expect(subject.position).to eq({ x: x, y: y - num_of_backwards })
+      it 'thrice' do
+        subject.move(['r', 'r', 'r'])
+        expect(subject.direction).to eq(:west)
+        expect(subject.position).to eq({ x: x, y: y })
+      end
+
+      it 'four times' do
+        subject.move(['r', 'r', 'r', 'r'])
+        expect(subject.direction).to eq(:north)
+        expect(subject.position).to eq({ x: x, y: y })
       end
     end
 
     context 'starting from random (x, y) and facing east' do
-      let(:x) { rand(-100..100) }
-      let(:y) { rand(-100..100) }
-
-      before do
+      it 'once' do
+        x = rand(-100..100)
+        y = rand(-100..100)
         subject.instance_variable_set(:@position, { x: x, y: y })
         subject.instance_variable_set(:@direction, :east)
-      end
-
-      it 'once' do
-        subject.move(['b'])
-        expect(subject.position).to eq({ x: x - 1, y: y })
-      end
-
-      it 'twice' do
-        subject.move(['b', 'b'])
-        expect(subject.position).to eq({ x: x - 2, y: y })
-      end
-
-      it 'for any given number of backward commands' do
-        num_of_backwards = rand(0..100)
-        commands = num_of_backwards.times.map { 'b' }
-        subject.move(commands)
-        expect(subject.position).to eq({ x: x - num_of_backwards, y: y })
+        subject.move(['r'])
+        expect(subject.direction).to eq(:south)
+        expect(subject.position).to eq({ x: x, y: y })
       end
     end
 
     context 'starting from random (x, y) and facing south' do
-      let(:x) { rand(-100..100) }
-      let(:y) { rand(-100..100) }
-
-      before do
+      it 'once' do
+        x = rand(-100..100)
+        y = rand(-100..100)
         subject.instance_variable_set(:@position, { x: x, y: y })
         subject.instance_variable_set(:@direction, :south)
-      end
-
-      it 'once' do
-        subject.move(['b'])
-        expect(subject.position).to eq({ x: x, y: y + 1 })
-      end
-
-      it 'twice' do
-        subject.move(['b', 'b'])
-        expect(subject.position).to eq({ x: x, y: y + 2 })
-      end
-
-      it 'for any given number of backward commands' do
-        num_of_backwards = rand(0..100)
-        commands = num_of_backwards.times.map { 'b' }
-        subject.move(commands)
-        expect(subject.position).to eq({ x: x, y: y + num_of_backwards })
+        subject.move(['r'])
+        expect(subject.direction).to eq(:west)
+        expect(subject.position).to eq({ x: x, y: y })
       end
     end
 
     context 'starting from random (x, y) and facing west' do
+      it 'once' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        subject.instance_variable_set(:@direction, :west)
+        subject.move(['r'])
+        expect(subject.direction).to eq(:north)
+        expect(subject.position).to eq({ x: x, y: y })
+      end
+    end
+  end
+
+  describe 'moves left' do
+    context 'starting from random (x, y) and facing north' do
       let(:x) { rand(-100..100) }
       let(:y) { rand(-100..100) }
 
-      before do
-        subject.instance_variable_set(:@position, { x: x, y: y })
-        subject.instance_variable_set(:@direction, :west)
-      end
+      before { subject.instance_variable_set(:@position, { x: x, y: y }) }
 
       it 'once' do
-        subject.move(['b'])
-        expect(subject.position).to eq({ x: x + 1, y: y })
+        subject.move(['l'])
+        expect(subject.direction).to eq(:west)
+        expect(subject.position).to eq({ x: x, y: y })
       end
 
       it 'twice' do
-        subject.move(['b', 'b'])
-        expect(subject.position).to eq({ x: x + 2, y: y })
+        subject.move(['l', 'l'])
+        expect(subject.direction).to eq(:south)
+        expect(subject.position).to eq({ x: x, y: y })
       end
 
-      it 'for any given number of forward commands' do
-        num_of_backwards = rand(0..100)
-        commands = num_of_backwards.times.map { 'b' }
-        subject.move(commands)
-        expect(subject.position).to eq({ x: x + num_of_backwards, y: y })
+      it 'thrice' do
+        subject.move(['l', 'l', 'l'])
+        expect(subject.direction).to eq(:east)
+        expect(subject.position).to eq({ x: x, y: y })
+      end
+
+      it 'four times' do
+        subject.move(['l', 'l', 'l', 'l'])
+        expect(subject.direction).to eq(:north)
+        expect(subject.position).to eq({ x: x, y: y })
+      end
+    end
+
+    context 'starting from random (x, y) and facing east' do
+      it 'once' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        subject.instance_variable_set(:@direction, :east)
+        subject.move(['l'])
+        expect(subject.direction).to eq(:north)
+        expect(subject.position).to eq({ x: x, y: y })
+      end
+    end
+
+    context 'starting from random (x, y) and facing south' do
+      it 'once' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        subject.instance_variable_set(:@direction, :south)
+        subject.move(['l'])
+        expect(subject.direction).to eq(:east)
+        expect(subject.position).to eq({ x: x, y: y })
+      end
+    end
+
+    context 'starting from random (x, y) and facing west' do
+      it 'once' do
+        x = rand(-100..100)
+        y = rand(-100..100)
+        subject.instance_variable_set(:@position, { x: x, y: y })
+        subject.instance_variable_set(:@direction, :west)
+        subject.move(['l'])
+        expect(subject.direction).to eq(:south)
+        expect(subject.position).to eq({ x: x, y: y })
       end
     end
   end
