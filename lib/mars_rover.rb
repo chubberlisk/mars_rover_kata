@@ -1,4 +1,18 @@
 class MarsRover
+  MOVEMENT = {
+    :north => { 'f' => [:y, 1], 'b' => [:y, -1] },
+    :east => { 'f' => [:x, 1], 'b' => [:x, -1] },
+    :south => { 'f' => [:y, -1], 'b' => [:y, 1] },
+    :west => { 'f' => [:x, -1], 'b' => [:x, 1] }
+  }.freeze
+
+  ROTATIONS = {
+    :north => { 'l' => :west, 'r' => :east },
+    :east => { 'l' => :north, 'r' => :south },
+    :south => { 'l' => :east, 'r' => :west },
+    :west => { 'l' => :south, 'r' => :north }
+  }.freeze
+
   attr_reader :position, :direction
 
   def initialize(starting_position, facing_direction)
@@ -8,14 +22,11 @@ class MarsRover
 
   def move(commands)
     commands.each do |command|
-      if @direction == :north
-        command == 'f' ? @position[:y] += 1 : @position[:y] -= 1
-      elsif @direction == :east
-        command == 'f' ? @position[:x] += 1 : @position[:x] -= 1
-      elsif @direction == :south
-        command == 'f' ? @position[:y] -= 1 :  @position[:y] += 1
+      if command == 'f' || command == 'b'
+        axis, change = MOVEMENT[@direction][command]
+        @position[axis] += change
       else
-        command == 'f' ? @position[:x] -= 1 : @position[:x] += 1
+        @direction = ROTATIONS[@direction][command]
       end
     end
   end
