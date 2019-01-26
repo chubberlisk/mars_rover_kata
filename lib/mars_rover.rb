@@ -15,9 +15,10 @@ class MarsRover
 
   attr_reader :position, :direction
 
-  def initialize(starting_position, facing_direction)
+  def initialize(starting_position, facing_direction, grid_size)
     @position = starting_position
     @direction = facing_direction
+    @grid_size = grid_size
   end
 
   def move(commands)
@@ -25,6 +26,8 @@ class MarsRover
       if command == 'f' || command == 'b'
         axis, change = MOVEMENT[@direction][command]
         @position[axis] += change
+        @position[axis] = @grid_size[axis] if @position[axis] < 0
+        @position[axis] = 0 if @position[axis] > @grid_size[axis]
       else
         @direction = ROTATIONS[@direction][command]
       end
