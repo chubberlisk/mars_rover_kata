@@ -23,22 +23,22 @@ class MarsRover
 
   def move(commands)
     commands.each do |command|
-      if command == 'f' || command == 'b'
-        axis, change = MOVEMENT[@direction][command]
-        next_position = @position.clone
-        next_position[axis] += change
-        next_position[axis] = @grid[:size][axis] if next_position[axis] < 0
-        next_position[axis] = 0 if next_position[axis] > @grid[:size][axis]
-        if @grid[:obstacles].include?(next_position)
-          @obstacle = next_position
-          puts "Obstacle found at #{@obstacle}."
-          break
-        else
-          @position = next_position
-        end
-      else
-        @direction = ROTATIONS[@direction][command]
-      end
+      break if @obstacle
+      command == 'f' || command == 'b' ? change_position(command) : @direction = ROTATIONS[@direction][command]
+    end
+  end
+
+  def change_position(command)
+    axis, change = MOVEMENT[@direction][command]
+    next_position = @position.clone
+    next_position[axis] += change
+    next_position[axis] = @grid[:size][axis] if next_position[axis] < 0
+    next_position[axis] = 0 if next_position[axis] > @grid[:size][axis]
+    if @grid[:obstacles].include?(next_position)
+      @obstacle = next_position
+      puts "Obstacle found at #{@obstacle}."
+    else
+      @position = next_position
     end
   end
 end
