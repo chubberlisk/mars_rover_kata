@@ -1,9 +1,11 @@
 require_relative '../lib/mars_rover'
 
 describe MarsRover do
-  let(:grid_size) { { x: 10, y: 10 } }
+  let(:grid) { { size: { x: 10, y: 10 }, obstacles: [] } }
 
-  subject { MarsRover.new({ x: 0, y: 0 }, :north, grid_size) }
+  subject { MarsRover.new({ x: 0, y: 0 }, :north, grid) }
+
+  before { allow(STDOUT).to receive(:write) }  # suppress output
 
   it 'takes an initial starting position, direction and grid size' do
     expect(MarsRover).to respond_to(:new).with(3).arguments
@@ -17,14 +19,14 @@ describe MarsRover do
     expect(subject.direction).to eq(:north)
   end
 
-  it 'sets grid size to current grid size' do
-    expect(subject.instance_variable_get(:@grid_size)).to eq(grid_size)
+  it 'sets grid to current grid' do
+    expect(subject.instance_variable_get(:@grid)).to eq(grid)
   end
 
   describe 'moves forward' do
     before { subject.instance_variable_set(:@position, { x: 5, y: 5 }) }
 
-    context 'e.g. starting from (5, 5) while facing north' do
+    context 'starting from (5, 5) while facing north' do
       it 'returns (5, 6) as its current position for a single forward command' do
         subject.move(['f'])
         expect(subject.position).to eq({ x: 5, y: 6 })
@@ -38,7 +40,7 @@ describe MarsRover do
       end
     end
 
-    context 'e.g. starting from (5, 5) while facing east' do
+    context 'starting from (5, 5) while facing east' do
       it 'returns (8, 5) as its current position for multiple forward commands' do
         subject.instance_variable_set(:@direction, :east) 
         subject.move(['f', 'f', 'f'])
@@ -47,7 +49,7 @@ describe MarsRover do
       end
     end
 
-    context 'e.g. starting from (5, 5) while facing south' do
+    context 'starting from (5, 5) while facing south' do
       it 'returns (5, 2) as its current position for multiple forward commands' do
         subject.instance_variable_set(:@direction, :south) 
         subject.move(['f', 'f', 'f'])
@@ -56,7 +58,7 @@ describe MarsRover do
       end
     end
 
-    context 'e.g. starting from (5, 5) while facing west' do
+    context 'starting from (5, 5) while facing west' do
       it 'returns (2, 5) as its current position for multiple forward commands' do
         subject.instance_variable_set(:@direction, :west) 
         subject.move(['f', 'f', 'f'])
@@ -69,7 +71,7 @@ describe MarsRover do
   describe 'moves backward' do
     before { subject.instance_variable_set(:@position, { x: 5, y: 5 }) }
 
-    context 'e.g. starting from (5, 5) while facing north' do
+    context 'starting from (5, 5) while facing north' do
       it 'returns (5, 4) as its current position for a single backward command' do
         subject.move(['b'])
         expect(subject.position).to eq({ x: 5, y: 4 })
@@ -83,7 +85,7 @@ describe MarsRover do
       end
     end
 
-    context 'e.g. starting from (5, 5) while facing east' do
+    context 'starting from (5, 5) while facing east' do
       it 'returns (2, 5) as its current position for multiple backward commands' do
         subject.instance_variable_set(:@direction, :east) 
         subject.move(['b', 'b', 'b'])
@@ -92,7 +94,7 @@ describe MarsRover do
       end
     end
 
-    context 'e.g. starting from (5, 5) while facing south' do
+    context 'starting from (5, 5) while facing south' do
       it 'returns (5, 8) as its current position for multiple backward commands' do
         subject.instance_variable_set(:@direction, :south) 
         subject.move(['b', 'b', 'b'])
@@ -101,7 +103,7 @@ describe MarsRover do
       end
     end
 
-    context 'e.g. starting from (5, 5) while facing west' do
+    context 'starting from (5, 5) while facing west' do
       it 'returns (8, 5) as its current position for multiple backward commands' do
         subject.instance_variable_set(:@direction, :west) 
         subject.move(['b', 'b', 'b'])
@@ -346,6 +348,42 @@ describe MarsRover do
         subject.move(['f'])
         expect(subject.position).to eq({ x: 0, y: 10 })
         expect(subject.direction).to eq(:east)
+      end
+    end
+  end
+
+  describe 'detects obstacles' do
+    context 'starting from (5, 5) while facing north for the following commands: f, f, r' do
+      before { subject.instance_variable_set(:@position, { x: 5, y: 5 }) }
+
+      describe 'moves up to the last possible point and aborts the sequence' do
+        it 'returns (5, 5) and facing north when obstacle at (5, 6)' do
+          subject.instance_variable_set(:@grid, { size: { x: 10, y: 10 }, obstacles: [{ x: 5, y: 6 }] })
+          subject.move(['f', 'f', 'r'])
+          expect(subject.position).to eq({ x: 5, y: 5 })
+          expect(subject.direction).to eq(:north)
+        end
+
+        it 'returns (5, 6) and facing north when obstacle at (5, 7)' do
+          subject.instance_variable_set(:@grid, { size: { x: 10, y: 10 }, obstacles: [{ x: 5, y: 7 }] })
+          subject.move(['f', 'f', 'r'])
+          expect(subject.position).to eq({ x: 5, y: 6 })
+          expect(subject.direction).to eq(:north)
+        end
+      end
+
+      describe 'reports the obstacle' do
+        it 'returns (5, 6) for found obstacle when obstacle at (5, 6)' do
+          subject.instance_variable_set(:@grid, { size: { x: 10, y: 10 }, obstacles: [{ x: 5, y: 6 }] })
+          subject.move(['f', 'f', 'r'])
+          expect(subject.obstacle).to eq({ x: 5, y: 6 })
+        end
+
+        it 'returns (5, 7) for found obstacle when obstacle at (5, 7)' do
+          subject.instance_variable_set(:@grid, { size: { x: 10, y: 10 }, obstacles: [{ x: 5, y: 7 }] })
+          subject.move(['f', 'f', 'r'])
+          expect(subject.obstacle).to eq({ x: 5, y: 7 })
+        end
       end
     end
   end
