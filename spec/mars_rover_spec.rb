@@ -23,6 +23,26 @@ describe MarsRover do
     expect(subject.instance_variable_get(:@grid)).to eq(grid)
   end
 
+  it 'allows only valid commands i.e. f, b, r, l' do
+    expect { subject.move(['f']) }.not_to raise_error
+    expect { subject.move(['b']) }.not_to raise_error
+    expect { subject.move(['r']) }.not_to raise_error
+    expect { subject.move(['l']) }.not_to raise_error
+  end
+
+  it 'raises InvalidCommandError if invalid command is given' do
+    expect { subject.move(['a']) }.to raise_error(InvalidCommandError)
+    expect { subject.move([1]) }.to raise_error(InvalidCommandError)
+    expect { subject.move([:right]) }.to raise_error(InvalidCommandError)
+  end
+
+  it 'ignores the case of commands' do
+    expect { subject.move(['F']) }.not_to raise_error
+    expect { subject.move(['B']) }.not_to raise_error
+    expect { subject.move(['R']) }.not_to raise_error
+    expect { subject.move(['L']) }.not_to raise_error
+  end
+
   describe 'moves forward' do
     before { subject.instance_variable_set(:@position, { x: 5, y: 5 }) }
 
