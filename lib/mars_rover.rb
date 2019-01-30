@@ -13,21 +13,29 @@ class MarsRover
     :west => { 'l' => :south, 'r' => :north }
   }.freeze
 
-  attr_reader :position, :direction
+  attr_reader :position, :direction, :obstacle
 
-  def initialize(starting_position, facing_direction, grid_size)
+  def initialize(starting_position, facing_direction, grid)
     @position = starting_position
     @direction = facing_direction
-    @grid_size = grid_size
+    @grid = grid
   end
 
   def move(commands)
     commands.each do |command|
       if command == 'f' || command == 'b'
         axis, change = MOVEMENT[@direction][command]
-        @position[axis] += change
-        @position[axis] = @grid_size[axis] if @position[axis] < 0
-        @position[axis] = 0 if @position[axis] > @grid_size[axis]
+        next_position = @position.clone
+        next_position[axis] += change
+        next_position[axis] = @grid[:size][axis] if next_position[axis] < 0
+        next_position[axis] = 0 if next_position[axis] > @grid[:size][axis]
+        if @grid[:obstacles].include?(next_position)
+          @obstacle = next_position
+          puts "Obstacle found at #{@obstacle}."
+          break
+        else
+          @position = next_position
+        end
       else
         @direction = ROTATIONS[@direction][command]
       end
