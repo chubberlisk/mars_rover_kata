@@ -26,7 +26,7 @@ class MarsRover
     @grid = grid
   end
 
-  def move(commands)
+  def move!(commands)
     commands.each do |command|
       raise InvalidCommandError, "Invalid command given => #{command}." unless valid_command?(command)
       break if @obstacle
