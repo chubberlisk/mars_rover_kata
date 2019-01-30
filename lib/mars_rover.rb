@@ -28,6 +28,8 @@ class MarsRover
     end
   end
 
+  private
+
   def change_position(command)
     axis, change = MOVEMENT[@direction][command]
     next_position = @position.clone
