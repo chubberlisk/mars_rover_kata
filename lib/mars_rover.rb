@@ -1,3 +1,6 @@
+class InvalidCommandError < RuntimeError
+end
+
 class MarsRover
   MOVEMENT = {
     :north => { 'f' => [:y, 1], 'b' => [:y, -1] },
@@ -23,14 +26,16 @@ class MarsRover
 
   def move(commands)
     commands.each do |command|
+      raise InvalidCommandError, "Invalid command given => #{command}." unless valid_command?(command)
       break if @obstacle
-      command == 'f' || command == 'b' ? change_position(command) : @direction = ROTATIONS[@direction][command]
+      command.downcase!
+      command == 'f' || command == 'b' ? change_position!(command) : @direction = ROTATIONS[@direction][command]
     end
   end
 
   private
 
-  def change_position(command)
+  def change_position!(command)
     axis, change = MOVEMENT[@direction][command]
     next_position = @position.clone
     next_position[axis] += change
@@ -42,5 +47,9 @@ class MarsRover
     else
       @position = next_position
     end
+  end
+
+  def valid_command?(command)
+    ['f', 'b', 'r', 'l', 'F', 'B', 'R', 'L'].include?(command)
   end
 end
