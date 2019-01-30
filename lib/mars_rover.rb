@@ -2,6 +2,8 @@ class InvalidCommandError < RuntimeError
 end
 
 class MarsRover
+  VALID_COMMANDS = ['f', 'b', 'r', 'l'].freeze
+
   MOVEMENT = {
     :north => { 'f' => [:y, 1], 'b' => [:y, -1] },
     :east => { 'f' => [:x, 1], 'b' => [:x, -1] },
@@ -50,6 +52,6 @@ class MarsRover
   end
 
   def valid_command?(command)
-    ['f', 'b', 'r', 'l', 'F', 'B', 'R', 'L'].include?(command)
+    VALID_COMMANDS.include?(command) || VALID_COMMANDS.map(&:upcase).include?(command)
   end
 end
