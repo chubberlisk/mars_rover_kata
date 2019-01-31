@@ -26,18 +26,18 @@ class MarsRover
     @grid = grid
   end
 
-  def move!(commands)
+  def move(commands)
     commands.each do |command|
       raise InvalidCommandError, "Invalid command given => #{command}." unless valid_command?(command)
       break if @obstacle
       command.downcase!
-      command == 'f' || command == 'b' ? change_position!(command) : @direction = ROTATIONS[@direction][command]
+      command == 'f' || command == 'b' ? update_position(command) : update_direction(command)
     end
   end
 
   private
 
-  def change_position!(command)
+  def update_position(command)
     axis, change = MOVEMENT[@direction][command]
     next_position = @position.clone
     next_position[axis] += change
@@ -49,6 +49,10 @@ class MarsRover
     else
       @position = next_position
     end
+  end
+
+  def update_direction(command)
+    @direction = ROTATIONS[@direction][command]
   end
 
   def valid_command?(command)
